@@ -1,63 +1,27 @@
 #include <GL/glut.h>
 #include <math.h>
-#include "glm.h"
 #include "imageloader.h"
-#include <string>
+
 
 static int head = 0, body = 0,Rshoulder = 0, Relbow = 0, RfingerBase = 0,
 RfingerUp = 0, RpointerBase = 0, RpointerUp = 0, RmiddleBase = 0,  RmiddleUp = 0,
 RringBase = 0, RringUp = 0, RpinkyBase = 0, RpinkyUp = 0, Lshoulder = 0, Lelbow = 0,
 LfingerBase = 0, LfingerUp = 0, LpointerBase = 0, LpointerUp = 0, LmiddleBase = 0,lthigh = 0,rthigh = 0,
 LmiddleUp = 0, LringBase = 0, LringUp = 0, LpinkyBase = 0, LpinkyUp = 0, Rthigh = 0, Rleg = 0, Lthigh = 0, Lleg = 0;
-int moving, startx , starty;
+int moving, startx, starty;
 double eye[] = { 0, 0, -20 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
 double direction[3];
-GLfloat angle, angle2 = 0.0;   /* in degrees */
-
+GLfloat angle = 0.0;   /* in degrees */
 int windowWidth = 1024;
 int windowHeight = 768;
 float aspect = float(windowWidth) / float(windowHeight);
 Image* image;
-// Image* image1 = loadBMP("floor.bmp");
-// Image* image2 = loadBMP("floor2.bmp");
-// Image* image3 = loadBMP("floor3.bmp");
-/*GLMmodel* pmodel;
-GLMmodel* pmodel1;
-GLMmodel* pmodel2 = glmReadOBJ("data/flowers.obj");
-GLMmodel* pmodel3 = glmReadOBJ("data/rose+vase.obj");
-GLMmodel* pmodel4 = glmReadOBJ("data/al.obj");*/
+
 float VRot =0.0;
 
 
-// RGBA
-GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
-GLfloat light_diffuse[] = { 0.5, 0.5, 0.5,1.0 };
-GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0 };
-// x , y, z, w
-GLfloat light_position[] = {0.5,5.0, 0.0, 1.0 };
-GLfloat lightPos1[] = {-0.5,-5.0,-2.0, 1.0 };
-// Material Properties
-GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0 };
-GLfloat mat_specular[] = { 0.0, 0.0, 0.0, 1.0 };
-GLfloat shininess[] = {100.0 };  
-//left teapot specular
-GLfloat teapotl_diff[] = { 0.0,0.0, 1.0, 1.0 };
-GLfloat teapotl_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat teapotl_shininess[] = {10.0 };  
-//middle teapot diffuse
-GLfloat teapotm_diff[] = { 1.0, 0, 0.0, 1.0 };
-GLfloat teapotm_specular[] = { 0.0, 0.0, 0.0, 0.0 };
-GLfloat teapotm_shininess[] = {1.0 };  
-//right teapot glosy
-GLfloat teapotr_diff[] = { 1.0, .0, 0.0, 1.0 };
-GLfloat teapotr_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-GLfloat teapotr_shininess[] = {1000.0 };  
-//cube
-GLfloat cube_diff[] = {1.0,0.0, 0.0, 1.0 };
-GLfloat cube_specular[] = { 0.5, 0.5, 0.5, 1.0 };
-GLfloat cube_shininess[] = {10.0 }; 
 GLuint loadTexture(Image* image) {
       GLuint textureId;
       glGenTextures(1, &textureId); //Make room for our texture
@@ -76,7 +40,6 @@ GLuint loadTexture(Image* image) {
 }
 
 GLuint _textureId; //The id of the texture
-GLuint _textureId1; //The id of the texture
 
 
 GLuint startList;
@@ -85,43 +48,16 @@ GLuint startList;
 void initRendering() {
    if (!image) {
 		image = loadBMP("data/floor2.bmp");
-      if (!image) exit(0);
+   if (!image) exit(0);
 	}
    _textureId = loadTexture(image);
    delete image;
-   // Turn on the power
-   glEnable(GL_LIGHTING);
-   // Flip light switch
-   glEnable(GL_LIGHT0);
-   glEnable(GL_LIGHT1);
-   // assign light parameters
-   glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-   glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-   glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-   glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
-   glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-   glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
-	// Material Properties         
-        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,mat_amb_diff);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-        glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
-	GLfloat lightColor1[] = {1.0f, 1.0f,  1.0f, 1.0f };
-        glLightfv(GL_LIGHT1, GL_DIFFUSE, lightColor1);
-        glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightColor1);
-        glEnable(GL_NORMALIZE);
-        //Enable smooth shading
-        glShadeModel(GL_SMOOTH);
-        // Enable Depth buffer
-        glEnable(GL_DEPTH_TEST);
 }
 
 void init(void)
 {
    glMatrixMode(GL_PROJECTION);
-	gluPerspective(50.0, aspect, 1.0, 60.0);
-   glClearColor(0.0, 0.0, 0.0, 0.0);
-   glShadeModel(GL_FLAT);
+	gluPerspective(60.0, aspect, 1.0, 60.0);
 }
 
 void crossProduct(double a[], double b[], double c[])
@@ -173,22 +109,16 @@ void rotatePoint(double a[], double theta, double p[])
 
 void Left()
 {
-	// implement camera rotation arround vertical window screen axis to the left
-	// used by mouse and left arrow
    rotatePoint(up, 0.1, eye);
 }
 
 void Right()
 {
-	// implement camera rotation arround vertical window screen axis to the right
-	// used by mouse and right arrow
    rotatePoint(up, -0.1, eye);
 }
 
 void Up()
 {
-	// implement camera rotation arround horizontal window screen axis +ve
-	// used by up arrow
    crossProduct(eye, up, direction);
    normalize(direction);
    rotatePoint(direction, -0.1, eye);
@@ -197,8 +127,6 @@ void Up()
 
 void Down()
 {	
-	// implement camera rotation arround horizontal window screen axis 
-	// used by down arrow
    crossProduct(eye, up, direction);
    normalize(direction);
    rotatePoint(direction, 0.1, eye);
@@ -230,17 +158,90 @@ void moveBack()
 	center[1] -= direction[1] * 0.01;
 	center[2] -= direction[2] * 0.01;
 }
+void floorTexture()
+{
+   //floortextureId
+	glPushMatrix();
+	glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, _textureId);
 
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+   glBegin(GL_QUADS);      
+	glNormal3f(0.0,-1.0,0.0);
+	glTexCoord2f(0.0f, 0.0f);
+   glVertex3f(-10,10,10);
+   glTexCoord2f(5.0f,  0.0f);
+   glVertex3f(10,10,10);
+   glTexCoord2f(5.0f,  20.0f);
+   glVertex3f(10,10,-10);
+   glTexCoord2f(0.0f, 20.0f);
+   glVertex3f(-10,10,-10);
+   glEnd();
+
+   glBegin(GL_QUADS);      
+	glNormal3f(0.0,0.0,-1.0);
+	glTexCoord2f(0.0f, 0.0f);
+   glVertex3f(10,10,10);
+   glTexCoord2f(5.0f,  0.0f);
+   glVertex3f(10,-3.35,10);
+   glTexCoord2f(5.0f,  20.0f);
+   glVertex3f(-10,-3.35,10);
+   glTexCoord2f(0.0f, 20.0f);
+   glVertex3f(-10,10,10);
+   glEnd();
+
+   glBegin(GL_QUADS);       
+	glNormal3f(-1.0,0.0,0.0);
+	glTexCoord2f(0.0f, 0.0f);
+   glVertex3f(10,-3.35,10);
+   glTexCoord2f(5.0f,  0.0f);
+   glVertex3f(10,10,10);
+   glTexCoord2f(5.0f,  20.0f);
+   glVertex3f(10,10,-10);
+   glTexCoord2f(0.0f, 20.0f);
+   glVertex3f(10,-3.35,-10);
+   glEnd();
+
+   glBegin(GL_QUADS);       
+	glNormal3f(-1.0,0.0,0.0);
+	glTexCoord2f(0.0f, 0.0f);
+   glVertex3f(-10,-3.35,10);
+   glTexCoord2f(5.0f,  0.0f);
+   glVertex3f(-10,10,10);
+   glTexCoord2f(5.0f,  20.0f);
+   glVertex3f(-10,10,-10);
+   glTexCoord2f(0.0f, 20.0f);
+   glVertex3f(-10,-3.35,-10);
+   glEnd();
+
+   glBegin(GL_QUADS);      
+	glNormal3f(0.0,-1.0,0.0);
+	glTexCoord2f(0.0f, 0.0f);
+   glVertex3f(-10,-3.35,10);
+   glTexCoord2f(5.0f,  0.0f);
+   glVertex3f(10,-3.35,10);
+   glTexCoord2f(5.0f,  20.0f);
+   glVertex3f(10,-3.35,-10);
+   glTexCoord2f(0.0f, 20.0f);
+   glVertex3f(-10,-3.35,-10);
+   glEnd();
+	glDisable(GL_TEXTURE_2D);
+   glPopMatrix();
+   //
+}
 void display(void)
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT);
    glClearColor(0.0, 0.0, 0.0, 0.0);
    glMatrixMode(GL_MODELVIEW);
 	glShadeModel(GL_FLAT);
 	glLoadIdentity();
-	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);  
-   
-	// draw head
+	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
+   floorTexture();
 	//head
    glPushMatrix();
    glRotatef ((GLfloat) head, 0.0, 1.0, 0.0);
@@ -255,7 +256,7 @@ void display(void)
    glTranslatef(0.0, 1.0, 0.0);
    glPushMatrix();
    glScalef (1.0, 2.0, 0.4);
-   glutWireCube (1.5);
+   glutSolidCube (1.5);
    glPopMatrix();
    //left shoulder
    glPushMatrix();
@@ -264,7 +265,7 @@ void display(void)
    glTranslatef (1.0, 0.0, 0.0);
    glPushMatrix();
    glScalef (1.0, 0.4, 0.4);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
    //left elbow
    glTranslatef (0.5, 0.0, 0.0);
@@ -272,7 +273,7 @@ void display(void)
    glTranslatef (0.5, 0.0, 0.0);
    glPushMatrix();
    glScalef (1.0, 0.4, 0.4);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 // left hand
    //Draw finger flang 1 
@@ -282,14 +283,14 @@ void display(void)
    glTranslatef(0.1, -0.15, 0.1);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    //Draw finger flang 1 
    glTranslatef(0.15, 0.0, 0.0);
    glRotatef((GLfloat)LfingerUp, 0.0, 1.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //pointer
@@ -299,7 +300,7 @@ void display(void)
    glTranslatef(0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(0.15, 0.0, 0.0);
@@ -307,7 +308,7 @@ void display(void)
    glTranslatef(0.0, 0.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //middle
@@ -317,7 +318,7 @@ void display(void)
    glTranslatef(0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(0.15, 0.0, 0.0);
@@ -325,7 +326,7 @@ void display(void)
    glTranslatef(0.0, 0.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //ring
@@ -335,7 +336,7 @@ void display(void)
    glTranslatef(0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(0.15, 0.0, 0.0);
@@ -343,7 +344,7 @@ void display(void)
    glTranslatef(0.0, 0.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //pinky
@@ -353,7 +354,7 @@ void display(void)
    glTranslatef(0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(0.15, 0.0, 0.0);
@@ -361,9 +362,10 @@ void display(void)
    glTranslatef(0.0, 0.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
+   //
    glPopMatrix();
 //right side
    //shoulder
@@ -373,7 +375,7 @@ void display(void)
    glTranslatef (-1.0, 0.0, 0.0);
    glPushMatrix();
    glScalef (1.0, 0.4, 0.4);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
    //elbow
    glTranslatef (-0.5, 0.0, 0.0);
@@ -381,7 +383,7 @@ void display(void)
    glTranslatef (-0.5, 0.0, 0.0);
    glPushMatrix();
    glScalef (1.0, 0.4, 0.4);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 
    //Draw finger flang 1 
@@ -391,14 +393,14 @@ void display(void)
    glTranslatef(-0.2, -0.15, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    //Draw finger flang 1 
    glTranslatef(-0.15, 0.0, 0.0);
    glRotatef((GLfloat)RfingerUp, 0.0, 1.0, 0.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //pointer
@@ -408,14 +410,14 @@ void display(void)
    glTranslatef(-0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(-0.15, 0.0, 0.0);
    glRotatef((GLfloat)RpointerUp, 0.0, 0.0, 1.0);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //middle
@@ -425,14 +427,14 @@ void display(void)
    glTranslatef(-0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(-0.15, 0.0, 0.0);
    glRotatef((GLfloat)RmiddleUp, 0.0, 0.0, 1.0);
    glPushMatrix();
    glScalef(-0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //ring
@@ -442,14 +444,14 @@ void display(void)
    glTranslatef(-0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(-0.15, 0.0, 0.0);
    glRotatef((GLfloat)RringUp, 0.0, 0.0, 1.0);
    glPushMatrix();
    glScalef(-0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
    //pinky
@@ -459,16 +461,17 @@ void display(void)
    glTranslatef(-0.05, 0.0, 0.4);
    glPushMatrix();
    glScalef(0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
 
    glTranslatef(-0.15, 0.0, 0.0);
    glRotatef((GLfloat)RpinkyUp, 0.0, 0.0, 1.0);
    glPushMatrix();
    glScalef(-0.15, 0.05, 0.05);
-   glutWireCube(1);
+   glutSolidCube(1);
    glPopMatrix();
    glPopMatrix();
+   //
    glPopMatrix();
    //left leg
    glPushMatrix();
@@ -478,7 +481,7 @@ void display(void)
    glTranslatef(0, -0.5, 0.0);
    glPushMatrix();
    glScalef (0.5, 1.5, 0.6);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 
    glTranslatef(0, -1.0, 0.0);
@@ -486,7 +489,7 @@ void display(void)
    glTranslatef(0, -0.5, 0.0);
    glPushMatrix();
    glScalef (0.5, 1.5, 0.6);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 
    glTranslatef(0, -0.9, 0.0);
@@ -504,7 +507,7 @@ void display(void)
    glTranslatef(0, -0.5, 0.0);
    glPushMatrix();
    glScalef (0.5, 1.5, 0.6);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 
    glTranslatef(0, -1.0, 0.0);
@@ -512,7 +515,7 @@ void display(void)
    glTranslatef(0, -0.5, 0.0);
    glPushMatrix();
    glScalef (0.5, 1.5, 0.6);
-   glutWireCube (1.0);
+   glutSolidCube (1.0);
    glPopMatrix();
 
    glTranslatef(0, -0.9, 0.0);
@@ -523,66 +526,14 @@ void display(void)
    glPopMatrix();
 
    glPopMatrix();
-
-   glPushMatrix();
-   glLightfv(GL_LIGHT1, GL_POSITION, lightPos1);
-   glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-   glPopMatrix();
-   //materials properties
-   glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE,mat_amb_diff);
-   glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-   glMaterialfv(GL_FRONT, GL_SHININESS, shininess);
-   glPushMatrix();
-   glTranslatef(0, 0, -1);
- 
-	//floor
-	glPushMatrix();
-	glEnable(GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, _textureId);
-
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-   glBegin(GL_QUADS);
-       
-	glNormal3f(0.0,-1.0,0.0);
-	glTexCoord2f(0.0f, 0.0f);
-   glVertex3f(-10,-3.35,10);
-   glTexCoord2f(5.0f,  0.0f);
-   glVertex3f(10,-3.35,10);
-   glTexCoord2f(5.0f,  20.0f);
-   glVertex3f(10,-3.35,-10);
-   glTexCoord2f(0.0f, 20.0f);
-   glVertex3f(-10,-3.35,-10);
-   glEnd();
-	glDisable(GL_TEXTURE_2D);
-   glPopMatrix();
-	glPopMatrix();
-
-	// draw trunck
-	// call the robotic body draw function here
 	glutSwapBuffers();
 }
-void reshape(int w, int h)
-{
-   glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   gluPerspective(85.0, (GLfloat)w / (GLfloat)h, 1.0, 20.0);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glTranslatef(0.0, 0.0, -5.0);
-}
-
 static void mouse(int button, int state, int x, int y)
 {
   if (button == GLUT_LEFT_BUTTON) {
     if (state == GLUT_DOWN) {
       moving = 1;
       startx = x;
-      starty = y;
     }
     if (state == GLUT_UP) {
       moving = 0;
@@ -594,10 +545,10 @@ static void mouse(int button, int state, int x, int y)
 static void motion(int x, int y)
 {
   if (moving) {
-    angle = angle + (x - startx);
-    angle2 = angle2 + (y - starty);
+    angle =  (x - startx);
     startx = x;
-    starty = y;
+    rotatePoint(up, angle/100, eye);
+    
     glutPostRedisplay();
   }
 }
@@ -617,42 +568,32 @@ void specialKeys(int key, int x, int y)
 
 void screen_menu(int value)
 {
-
 	switch (value) {
-	case 1:
-      image = loadBMP("data/floor.bmp");
+	case 'a':
+		image = loadBMP("data/floor.bmp");
 		break;
-	case 2:
-      image = loadBMP("data/floor2.bmp");
+	case 's':
+		image = loadBMP("data/floor2.bmp");
 		break;
-   case 3:
-      image = loadBMP("data/floor3.bmp");
+   case 'd':
+		image = loadBMP("data/floor3.bmp");
 		break;
-	case 4:
-      image = loadBMP("data/floor4.bmp");
+	case 'f':
+		image = loadBMP("data/floor4.bmp");
 		break;
-	case 5:
-      image = loadBMP("data/floor5.bmp");
+	case 'j':
+		image = loadBMP("data/floor5.bmp");
 		break;
 	}
 
 	if (!image) exit(0);
    initRendering();
+
 	glutPostRedisplay();
 }
-// void drawmodel(void)
-// {
-// 	if (!image) {
-// 		image = loadBMP("data/floor.bmp");
-// 		if (!image) exit(0);
-// 	}
-
-// }
-
 
 void keyboard(unsigned char key, int x, int y)
 {
-	// List all youe keyboard keys from assignment two her for body movement
 	switch (key)
 	{
 	case 'f':
@@ -989,11 +930,9 @@ void keyboard(unsigned char key, int x, int y)
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
-   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB );
 	glutInitWindowSize(500, 500);
 	glutInitWindowPosition(100, 100);
-	//glutCreateWindow("body");
-   
    
 	glutCreateWindow("ROOM");
 	initRendering();
@@ -1002,15 +941,14 @@ int main(int argc, char **argv)
    glutCreateMenu(screen_menu);
 	glutAddMenuEntry("Floors", 0);
 	glutAddMenuEntry("", 0);
-	glutAddMenuEntry("floor1", 1);
-	glutAddMenuEntry("floor2", 2);
-	glutAddMenuEntry("floor3", 3);
-	glutAddMenuEntry("floor4", 4);
-	glutAddMenuEntry("floor5", 5);
+	glutAddMenuEntry("floor1", 'a');
+	glutAddMenuEntry("floor2", 's');
+	glutAddMenuEntry("floor3", 'd');
+	glutAddMenuEntry("floor4", 'f');
+	glutAddMenuEntry("floor5", 'j');
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
    glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboard);
-   //glutReshapeFunc(reshape);
    glutMouseFunc(mouse);
    glutMotionFunc(motion);
 	glutMainLoop();
