@@ -50,7 +50,7 @@ void floorTexture()
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
    
-   glBindTexture(GL_TEXTURE_2D, loadTexture(loadBMP("data/floor3.bmp")));
+   glBindTexture(GL_TEXTURE_2D, loadTexture(loadBMP("data/floor5.bmp")));
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -197,7 +197,7 @@ void screen_menu(int value)
 		image = loadBMP("data/floor4.bmp");
 		break;
 	case 5:
-		image = loadBMP("data/floor5.bmp");
+		image = loadBMP("data/floor3.bmp");
 		break;
    case 6:
 		image = loadBMP("data/floor6.bmp");
