@@ -1,31 +1,35 @@
 #include <GL/glut.h>
 #include <math.h>
 
-static int head = 0, body = 0,Rshoulder = 0, Relbow = 0, RfingerBase = 0,
-RfingerUp = 0, RpointerBase = 0, RpointerUp = 0, RmiddleBase = 0,  RmiddleUp = 0,
-RringBase = 0, RringUp = 0, RpinkyBase = 0, RpinkyUp = 0, Lshoulder = 0, Lelbow = 0,
-LfingerBase = 0, LfingerUp = 0, LpointerBase = 0, LpointerUp = 0, LmiddleBase = 0,lthigh = 0,rthigh = 0,
-LmiddleUp = 0, LringBase = 0, LringUp = 0, LpinkyBase = 0, LpinkyUp = 0, Rthigh = 0, Rleg = 0, Lthigh = 0, Lleg = 0;
-double eye[] = { 0, 0, -20 };
+static int shoulderlz = -75, shoulderrz = 75, elbow = 0, fingerBase = 0, fingerUp = 0,
+            finger2Base = 0, finger2Up, finger3Base , finger3Up, finger4Base, finger4Up,
+            finger5Base, finger5Up, shoulderlx, shoulderrx,
+            fingerBase2, fingerUp2, finger2Base2, finger2Up2, finger3Base2, finger3Up2,
+            finger4Base2, finger4Up2, finger5Base2, finger5Up2,
+            body, elbow2, legx, legz, legx2, legz2, knee, knee2, ankle, ankle2, elbowx, elbowx2;
+double eye[] = { 0, 0, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
-double direction[3];
-
+double normal_ax[] = {1, 0, 0};
+double course[] = {0, 0, 0}; 
+int limit, limit2;
+static float theta = 3*M_PI /180;
+float step = 0.1;
 void crossProduct(double a[], double b[], double c[])
 {
-    c[0] = a[1] * b[2] - a[2] * b[1];
-    c[1] = a[2] * b[0] - a[0] * b[2];
-    c[2] = a[0] * b[1] - a[1] * b[0];
+	c[0] = a[1] * b[2] - a[2] * b[1];
+	c[1] = a[2] * b[0] - a[0] * b[2];
+	c[2] = a[0] * b[1] - a[1] * b[0];
 }
 
 void normalize(double a[])
 {
-    double norm;
-    norm = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
-    norm = sqrt(norm);
-    a[0] /= norm;
-    a[1] /= norm;
-    a[2] /= norm;
+	double norm;
+	norm = a[0] * a[0] + a[1] * a[1] + a[2] * a[2];
+	norm = sqrt(norm);
+	a[0] /= norm;
+	a[1] /= norm;
+	a[2] /= norm;
 }
 
 void rotatePoint(double a[], double theta, double p[])
@@ -55,388 +59,247 @@ void rotatePoint(double a[], double theta, double p[])
 	p[0] = temp[0];
 	p[1] = temp[1];
 	p[2] = temp[2];
+
 }
 
 void Left()
 {
-   rotatePoint(up, 0.1, eye);
+	// implement camera rotation arround vertical window screen axis to the left
+	// used by mouse and left arrow
+	if(limit >= -30)
+	{
+		rotatePoint(up, -theta, eye);
+		limit--;
+	}
 }
 
 void Right()
 {
-   rotatePoint(up, -0.1, eye);
+	// implement camera rotation arround vertical window screen axis to the right
+	// used by mouse and right arrow
+	if(limit <= 30){
+		rotatePoint(up, theta, eye);
+		limit++;
+	}
 }
 
 void Up()
 {
-   crossProduct(eye, up, direction);
-   normalize(direction);
-   rotatePoint(direction, -0.1, eye);
-   rotatePoint(direction, -0.1, up);
+	// implement camera rotation arround horizontal window screen axis +ve
+	// used by up arrow
+	if(limit2 <= 27)
+	{
+		crossProduct(eye , up, normal_ax);
+		normalize(normal_ax);
+		rotatePoint(normal_ax, theta, eye);
+		limit2++;
+	}
 }
 
 void Down()
 {	
-   crossProduct(eye, up, direction);
-   normalize(direction);
-   rotatePoint(direction, 0.1, eye);
-   rotatePoint(direction, 0.1, up);
+	// implement camera rotation arround horizontal window screen axis 
+	// used by down arrow
+	if(limit2 >= -27)
+	{
+		crossProduct(up , eye, normal_ax);
+		normalize(normal_ax);
+		rotatePoint(normal_ax, theta, eye);
+		limit2--;
+	}
+}
+void set_direc(double a[], double b[], double c[])
+{
+	c[0] = a[0] - b[0];
+	c[1] = a[1] - b[1];
+	c[2] = a[2] - b[2];
 }
 void moveForward()
 {
-    direction[0] = center[0] - eye[0];
-    direction[1] = center[1] - eye[1];
-    direction[2] = center[2] - eye[2];
-    eye[0] += direction[0] * 0.01;
-    eye[1] += direction[1] * 0.01;
-    eye[2] += direction[2] * 0.01;
-    center[0] += direction[0] * 0.01;
-    center[1] += direction[1] * 0.01;
-    center[2] += direction[2] * 0.01;
+	set_direc(center, eye, course);
+	eye[0] += course[0] * step;
+	eye[1] += course[1] * step;
+	eye[2] += course[2] * step;
+
+	center[0] += course[0] * step;
+	center[1] += course[1] * step;
+	center[2] += course[2] * step;
 }
 
 void moveBack()
 {
-    direction[0] = center[0] - eye[0];
-    direction[1] = center[1] - eye[1];
-    direction[2] = center[2] - eye[2];
-    eye[0] -= direction[0] * 0.01;
-    eye[1] -= direction[1] * 0.01;
-    eye[2] -= direction[2] * 0.01;
-    center[0] -= direction[0] * 0.01;
-    center[1] -= direction[1] * 0.01;
-    center[2] -= direction[2] * 0.01;
+	set_direc(center, eye, course);
+	eye[0] -= course[0] * step;
+	eye[1] -= course[1] * step;
+	eye[2] -= course[2] * step;
+
+	center[0] -= course[0] * step;
+	center[1] -= course[1] * step;
+	center[2] -= course[2] * step;
 }
 void keyboard(unsigned char key, int x, int y)
 {
-    switch (key)
-    {
-    case 'f':
-        moveForward();
-        glutPostRedisplay();
-        break;
-    case 'b':
-        moveBack();
-        glutPostRedisplay();
-        break;
-    case 'h':
-        head = (head + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'H':
-        head = (head - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'u':
-        if (body < 45)
-        body = (body + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'U':
-        if (body > -45)
-        body = (body - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 's':
-    if (Lshoulder < 45)
-        Lshoulder = (Lshoulder + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'S':
-    if (Lshoulder > -45)
-        Lshoulder = (Lshoulder - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'a':
-    if (Rshoulder < 45)
-        Rshoulder = (Rshoulder + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'A':
-        if (Rshoulder > -45)
-        Rshoulder = (Rshoulder - 5) % 360;
-        glutPostRedisplay();
-    case 'e':
-        if (Lelbow < 0)
-        Lelbow = (Lelbow + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'E':
-        if (Lelbow > -90)
-        Lelbow = (Lelbow - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'y':
-        if (Relbow < 90)
-        Relbow = (Relbow + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'Y':
-        if (Relbow > 0)
-        Relbow = (Relbow - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'l':
-        if ( LfingerBase < 90)
-        LfingerBase = (LfingerBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'L':
-        if (LfingerBase > 0)
-        LfingerBase = (LfingerBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'g':
-        if (LfingerUp < 90)
-        LfingerUp = (LfingerUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'G':
-        if (LfingerUp > 0)
-        LfingerUp = (LfingerUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'p':
-        if (LpointerBase > -90)
-        LpointerBase = (LpointerBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'P':
-        if (LpointerBase < 0)
-        LpointerBase = (LpointerBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'q':
-        if (LpointerUp > -90)
-        LpointerUp = (LpointerUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'Q':
-        if (LpointerUp < 0)
-        LpointerUp = (LpointerUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'm':
-        if (LmiddleBase > -90)
-        LmiddleBase = (LmiddleBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'M':
-        if (LmiddleBase < 0)
-        LmiddleBase = (LmiddleBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'n':
-        if (LmiddleUp > -90)
-        LmiddleUp = (LmiddleUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'N':
-        if (LmiddleUp < 0)
-        LmiddleUp = (LmiddleUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'r':
-        if (LringBase > -90)
-        LringBase = (LringBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'R':
-        if (LringBase < 0)
-        LringBase = (LringBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 't':
-        if (LringUp > -90)
-        LringUp = (LringUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'T':
-        if (LringUp < 0)
-        LringUp = (LringUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'i':
-        if (LpinkyBase > -90)
-        LpinkyBase = (LpinkyBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'I':
-        if (LpinkyBase < 0)
-        LpinkyBase = (LpinkyBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'o':
-        if (LpinkyUp > -90)
-        LpinkyUp = (LpinkyUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'O':
-        if (LpinkyUp < 0)
-        LpinkyUp = (LpinkyUp + 5) % 360;
-        glutPostRedisplay();
-        break;        
-    case '1':
-        if (RfingerBase <0)
-        RfingerBase = (RfingerBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '!':
-        if (RfingerBase > -90)
-        RfingerBase = (RfingerBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '2':
-        if (RfingerUp < 90)
-        RfingerUp = (RfingerUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '@':
-        if (RfingerUp > 0)
-        RfingerUp = (RfingerUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '3':
-        if (RpointerBase > 0)
-        RpointerBase = (RpointerBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '#':
-        if (RpointerBase < 90)
-        RpointerBase = (RpointerBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '4':
-        if (RpointerUp > 0)
-        RpointerUp = (RpointerUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '$':
-        if (RpointerUp < 90)
-        RpointerUp = (RpointerUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '5':
-        if (RmiddleBase > 0)
-        RmiddleBase = (RmiddleBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '%':
-        if (RmiddleBase < 90)
-        RmiddleBase = (RmiddleBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '6':
-        if (RmiddleUp > 0)
-        RmiddleUp = (RmiddleUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '^':
-        if (RmiddleUp < 90)
-        RmiddleUp = (RmiddleUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '7':
-        if (RringBase > 0)
-        RringBase = (RringBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '&':
-        if (RringBase < 90)
-        RringBase = (RringBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '8':
-        if (RringUp > 0)
-        RringUp = (RringUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '*':
-        if (RringUp < 90)
-        RringUp = (RringUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '9':
-        if (RpinkyBase > 0)
-        RpinkyBase = (RpinkyBase - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '(':
-        if (RpinkyBase < 90)
-        RpinkyBase = (RpinkyBase + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case '0':
-        if (RpinkyUp > 0)
-        RpinkyUp = (RpinkyUp - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case ')':
-        if (RpinkyUp < 90)
-        RpinkyUp = (RpinkyUp + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'z':
-        if (lthigh > -90)
-        lthigh = (lthigh - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'Z':
-        if (lthigh < 0)
-        lthigh = (lthigh + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'x':
-        if (Lthigh > -90)
-        Lthigh = (Lthigh - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'X':
-        if (Lthigh < 90)
-        Lthigh = (Lthigh + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'c':
-        if (rthigh > 0)
-        rthigh = (rthigh - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'C':
-        if (rthigh < 90)
-        rthigh = (rthigh + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'v':
-        if (Rthigh > -90)
-        Rthigh = (Rthigh - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'V':
-        if (Rthigh < 90)
-        Rthigh = (Rthigh + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'd':
-        if (Lleg > 0 )
-        Lleg = (Lleg - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'D':
-        if (Lleg < 90)
-        Lleg = (Lleg + 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'k':
-        if (Rleg > 0)
-        Rleg = (Rleg - 5) % 360;
-        glutPostRedisplay();
-        break;
-    case 'K':
-        if (Rleg < 90)
-        Rleg = (Rleg + 5) % 360;
-        glutPostRedisplay();
-        break;
-    default:
-        break;
+	// List all youe keyboard keys from assignment two her for body movement
+	switch (key)
+	{
+        case 'x':
+        body = (body + 5);
+        glutPostRedisplay();
+        break;
+        case 'X':
+        body = (body - 5);
+        glutPostRedisplay();
+        break;
+        case 'A':
+        if(shoulderlx > - 10){
+        shoulderlx = (shoulderlx - 5);
+        shoulderrx = (shoulderrx + 5);
+        glutPostRedisplay();}
+        break;
+        case 'a':
+        if(shoulderlx < 110){
+        shoulderlx = (shoulderlx + 5);
+        shoulderrx = (shoulderrx - 5);
+        glutPostRedisplay();}
+        break;
+        case 's':
+        if(shoulderlz > -75){
+        shoulderlz = (shoulderlz - 5);
+        shoulderrz = (shoulderrz + 5);
+        glutPostRedisplay();}
+        break;
+        case 'S':
+        if(shoulderlz < 30){
+        shoulderlz = (shoulderlz + 5);
+        shoulderrz = (shoulderrz - 5);
+        glutPostRedisplay();}
+        break;
+        case 'e':
+        if(elbow < 145){
+        elbow = (elbow + 5);
+        elbow2 = (elbow2 - 5);
+        glutPostRedisplay();}
+        break;
+        case 'E':
+        if(elbow > 0){
+        elbow = (elbow - 5);
+        elbow2 = (elbow2 + 5);
+        glutPostRedisplay();}
+        break;
+        
+        case 'g':
+        if(fingerUp >  -90){
+        fingerUp = (fingerUp - 5);
+        finger2Up = (finger2Up - 5);
+        finger3Up = (finger3Up - 5);
+        finger4Up = (finger4Up - 5);
+        fingerUp2 = (fingerUp2 + 5);
+        finger2Up2 = (finger2Up2 + 5);
+        finger3Up2 = (finger3Up2 + 5);
+        finger4Up2 = (finger4Up2 + 5);
+        glutPostRedisplay();}
+        if(finger5Up < 90 ){
+        finger5Up = (finger5Up + 5);
+        finger5Up2 = (finger5Up2 - 5);
+        glutPostRedisplay();}
+        break;
+        case 'G':
+        if(fingerUp < 0){
+        fingerUp = (fingerUp + 5);
+        finger2Up = (finger2Up + 5);
+        finger3Up = (finger3Up + 5);
+        finger4Up = (finger4Up + 5);
+        fingerUp2 = (fingerUp2 - 5);
+        finger2Up2 = (finger2Up2 - 5);
+        finger3Up2 = (finger3Up2 - 5);
+        finger4Up2 = (finger4Up2 - 5);
+        glutPostRedisplay();}
+        if(finger5Up > 0){
+        finger5Up = (finger5Up - 5);
+        finger5Up2 = (finger5Up2 + 5);
+        glutPostRedisplay();}
+        break;
+        case 't':
+        if(legx < 50){
+            legx = (legx + 5);
+            glutPostRedisplay();}
+            break;
+        case 'T':
+        if(legx > -90){
+            legx = (legx - 5);
+        glutPostRedisplay();}
+        break;
+        case 'y':
+        if(legx2 < 50){
+            legx2 = (legx2 + 5);
+            glutPostRedisplay();}
+            break;
+        case 'Y':
+        if(legx2 > -90){
+            legx2 = (legx2 - 5);
+        glutPostRedisplay();}
+        break;
+        case 'u':
+        if(legz2 > -75){
+        legz2 = (legz2 - 5);
+        glutPostRedisplay();}
+        break;
+        case 'U':
+        if(legz2 < 0){
+            legz2 = (legz2 + 5) %360;
+            glutPostRedisplay();}
+        break;
+        case 'i':
+        if(legz < 75){
+        legz = (legz + 5);
+        glutPostRedisplay();}
+        break;
+        case 'I':
+        if(legz > 0){
+            legz = (legz - 5) %360;
+            glutPostRedisplay();}
+        break;
+        case 'h':
+        if(knee < 110){
+            knee = (knee + 5 );
+            glutPostRedisplay();}
+        break;
+        case 'H':
+        if(knee > 0){
+        knee = (knee - 5);
+        glutPostRedisplay();}
+        break;
+        case 'j':
+        if(knee2 < 110){
+            knee2 = (knee2 + 5 );
+            glutPostRedisplay();}
+        break;
+        case 'J':
+        if(knee2 > 0){
+        knee2 = (knee2 - 5);
+        glutPostRedisplay();}
+        break;
+        case 'q':
+        if(elbowx > -90){
+        elbowx = elbowx - 5;
+        elbowx2 = elbowx2 - 5;
+        glutPostRedisplay();}
+        break;
+        case 'Q':
+        if(elbowx < 0){
+        elbowx = elbowx + 5;
+        elbowx2 = elbowx2 + 5;
+        glutPostRedisplay();}
+        break;
+        case 'f':
+            moveForward();
+            glutPostRedisplay();
+            break;
+        case 'b':
+            moveBack();
+            glutPostRedisplay();
+            break;
+        default:
+            break;
     }
 }

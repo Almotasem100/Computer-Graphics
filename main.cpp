@@ -3,7 +3,6 @@
 #include "robot.cpp"
 
 int moving, startx, starty;
-GLfloat angle = 0.0;   /* in degrees */
 int windowWidth = 1024;
 int windowHeight = 768;
 float aspect = float(windowWidth) / float(windowHeight);
@@ -32,7 +31,7 @@ GLuint _textureId; //The id of the texture
 //Initializes 3D rendering
 void initRendering() {
    if (!image) {
-		image = loadBMP("data/floor2.bmp");
+		image = loadBMP("data/floor.bmp");
    if (!image) exit(0);
 	}
    _textureId = loadTexture(image);
@@ -50,13 +49,15 @@ void floorTexture()
    //floortextureId
 	glPushMatrix();
 	glEnable(GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, _textureId);
-
+   
+   glBindTexture(GL_TEXTURE_2D, loadTexture(loadBMP("data/floor3.bmp")));
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+   //glDisable(GL_TEXTURE_2D);
+   //glBindTexture(GL_TEXTURE_2D, loadTexture(loadBMP("data/floor3.bmp")));
    glBegin(GL_QUADS);      
 	glNormal3f(0.0,-1.0,0.0);
 	glTexCoord2f(0.0f, 0.0f);
@@ -105,6 +106,12 @@ void floorTexture()
    glVertex3f(-10,-3.35,-10);
    glEnd();
 
+   glBindTexture(GL_TEXTURE_2D, _textureId);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
    glBegin(GL_QUADS);      
 	glNormal3f(0.0,-1.0,0.0);
 	glTexCoord2f(0.0f, 0.0f);
@@ -139,6 +146,7 @@ static void mouse(int button, int state, int x, int y)
     if (state == GLUT_DOWN) {
       moving = 1;
       startx = x;
+      starty = y;
     }
     if (state == GLUT_UP) {
       moving = 0;
@@ -149,10 +157,14 @@ static void mouse(int button, int state, int x, int y)
 static void motion(int x, int y)
 {
   if (moving) {
-    angle =  (x - startx);
+	int xx = x-startx;
+	int yy = y-starty;
+    if(xx > 3){Left();}
+	else if(xx < -3){Right();}
+	if(yy > 3){Up();}
+	else if(yy < -3){Down();}
     startx = x;
-    rotatePoint(up, angle/100, eye);
-    
+    starty = y;
     glutPostRedisplay();
   }
 }
@@ -172,20 +184,26 @@ void specialKeys(int key, int x, int y)
 void screen_menu(int value)
 {
 	switch (value) {
-	case 'a':
+	case 1:
 		image = loadBMP("data/floor.bmp");
 		break;
-	case 's':
+	case 2:
 		image = loadBMP("data/floor2.bmp");
 		break;
-   case 'd':
-		image = loadBMP("data/floor3.bmp");
-		break;
-	case 'f':
+   // case 3:
+	// 	image = loadBMP("data/floor3.bmp");
+	// 	break;
+	case 4:
 		image = loadBMP("data/floor4.bmp");
 		break;
-	case 'j':
+	case 5:
 		image = loadBMP("data/floor5.bmp");
+		break;
+   case 6:
+		image = loadBMP("data/floor6.bmp");
+		break;
+	case 7:
+		image = loadBMP("data/floor7.bmp");
 		break;
 	}
 	if (!image) exit(0);
@@ -205,13 +223,15 @@ int main(int argc, char **argv)
 	init();
 	glutDisplayFunc(display);
    glutCreateMenu(screen_menu);
-	glutAddMenuEntry("Floors", 0);
-	glutAddMenuEntry("", 0);
-	glutAddMenuEntry("floor1", 'a');
-	glutAddMenuEntry("floor2", 's');
-	glutAddMenuEntry("floor3", 'd');
-	glutAddMenuEntry("floor4", 'f');
-	glutAddMenuEntry("floor5", 'j');
+	// glutAddMenuEntry("Floors:", 0);
+	// glutAddMenuEntry("", 0);
+   // glutAddMenuEntry("floor3", 3);
+	glutAddMenuEntry("         Floor1         ", 1);
+	glutAddMenuEntry("         Floor2", 2);
+	glutAddMenuEntry("         Floor3", 4);
+	glutAddMenuEntry("         Floor4", 5);
+   glutAddMenuEntry("         Floor5", 6);
+	glutAddMenuEntry("         Floor6", 7);
 	glutAttachMenu(GLUT_RIGHT_BUTTON);
    glutSpecialFunc(specialKeys);
 	glutKeyboardFunc(keyboard);
