@@ -8,6 +8,7 @@ GLfloat angle2 = 0.0;   /* in degrees */
 void robot() {
   
   glPushMatrix();
+  glTranslatef(0.0, elevation, 0.0);
   glRotatef(angle2, 1.0, 0.0, 0.0);
   glRotatef(angle, 0.0, 1.0, 0.0);
   glRotatef ((GLfloat) body, 0.0, 1.0, 0.0);

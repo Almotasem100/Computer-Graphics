@@ -1,6 +1,7 @@
 #include <GL/glut.h>
 #include "imageloader.h"
 #include "robot.cpp"
+#include <iostream> 
 
 int moving, startx, starty;
 int windowWidth = 1024;
@@ -136,8 +137,11 @@ void display(void)
 	glLoadIdentity();
 	gluLookAt(eye[0], eye[1], eye[2], center[0], center[1], center[2], up[0], up[1], up[2]);
    floorTexture();
+   //glTranslatef(0.0, 2.0, 0.0);
    robot();
-
+   // legx =-15, legx2 = -15, knee = 15, knee2 = 15;
+   body = 50;
+   glutPostRedisplay();
 	glutSwapBuffers();
 }
 static void mouse(int button, int state, int x, int y)
@@ -210,6 +214,125 @@ void screen_menu(int value)
    initRendering();
 	glutPostRedisplay();
 }
+int state = 0;
+int step_j = 1;
+void timerica(int)
+{
+
+   switch (state)
+   {
+      case 0:
+      {
+         if(legx > -60)
+         {
+            legx -= step_j;
+            legx2 -= step_j;
+            knee += step_j;
+            knee2 += step_j;
+            shoulderlx += step_j;
+            shoulderrx -= step_j;
+            elbow += 2*step_j;
+            elbow2 -= 2*step_j;
+            if(legx < -15)
+               elevation -= 0.01;
+         }
+         else
+            state = 1;
+      }break;
+      case 1:
+      {
+         if(legx < -15)
+         {
+            legx += step_j;
+            legx2 += step_j;
+            knee -= step_j;
+            knee2 -= step_j;
+            shoulderlx += step_j;
+            shoulderrx -= step_j;
+            elevation += 0.03;
+         }
+         else
+            state = 2;
+      }break;
+      case 2:
+      {
+         if(legx < 0)
+         {
+            legx += step_j;
+            legx2 += step_j;
+            knee -= step_j;
+            knee2 -= step_j;
+            shoulderlx += step_j;
+            shoulderrx -= step_j;
+            elbow -= 4*step_j;
+            elbow2 += 4*step_j;
+            elevation += 0.03;
+         }
+         else
+            state = 3;
+      }break;
+      case 3:
+      {
+         if(elevation > 0.025)
+         {
+            elevation -= 0.025;
+            if(elbow > 0)
+            {
+               elbow -= step_j;
+               elbow2 += step_j;
+            }
+            if(shoulderlx > 0)
+            {
+               shoulderlx -= step_j;
+               shoulderrx += step_j; 
+            }
+         }
+         else
+            state = 4;
+      }
+      case 4:
+      {
+         if(elbow > 0)
+         {
+            elbow -= step_j;
+            elbow2 += step_j;
+         }
+         if(shoulderlx > 0)
+         {
+            shoulderlx -= step_j;
+            shoulderrx += step_j; 
+         }
+         if (elbow == 0 && shoulderlx == 0)
+         {
+            state = 5;
+            elevation = 0;
+         }
+      }
+   }
+   glutPostRedisplay();
+   
+   if(state == 5)
+      state = 0;
+   else
+      glutTimerFunc(1000/60, timerica, 0);
+   
+}
+void keyboard(unsigned char key, int x, int y)
+{
+   keyboard2(key, x, y);
+   switch (key)
+   {
+   case 'z':
+      state = 0;
+      glutTimerFunc(1000/60, timerica, 0);
+      break;
+   // case 'Z':
+   //    elevation -= 0.5;
+   //    glutPostRedisplay();
+   default:
+      break;
+   }
+}
 
 int main(int argc, char **argv)
 {
@@ -237,6 +360,7 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyboard);
    glutMouseFunc(mouse);
    glutMotionFunc(motion);
+   // glutTimerFunc(1000/60, timerica, 0);
 	glutMainLoop();
 	return 0;
 }

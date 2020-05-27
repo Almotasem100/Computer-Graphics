@@ -1,12 +1,13 @@
 #include <GL/glut.h>
 #include <math.h>
-
+#include <iostream>
 static int shoulderlz = -75, shoulderrz = 75, elbow = 0, fingerBase = 0, fingerUp = 0,
             finger2Base = 0, finger2Up, finger3Base , finger3Up, finger4Base, finger4Up,
             finger5Base, finger5Up, shoulderlx, shoulderrx,
             fingerBase2, fingerUp2, finger2Base2, finger2Up2, finger3Base2, finger3Up2,
             finger4Base2, finger4Up2, finger5Base2, finger5Up2,
             body, elbow2, legx, legz, legx2, legz2, knee, knee2, ankle, ankle2, elbowx, elbowx2;
+double elevation;
 double eye[] = { 0, 0, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
@@ -137,7 +138,7 @@ void moveBack()
 	center[1] -= course[1] * step;
 	center[2] -= course[2] * step;
 }
-void keyboard(unsigned char key, int x, int y)
+void keyboard2(unsigned char key, int x, int y)
 {
 	// List all youe keyboard keys from assignment two her for body movement
 	switch (key)
@@ -157,7 +158,7 @@ void keyboard(unsigned char key, int x, int y)
         glutPostRedisplay();}
         break;
         case 'a':
-        if(shoulderlx < 110){
+        if(shoulderlx < 160){
         shoulderlx = (shoulderlx + 5);
         shoulderrx = (shoulderrx - 5);
         glutPostRedisplay();}
@@ -222,6 +223,8 @@ void keyboard(unsigned char key, int x, int y)
         case 't':
         if(legx < 50){
             legx = (legx + 5);
+            // std::cout<<legx<<legx2<<std::endl;
+            // std::cout<<knee<<knee2<<std::endl;
             glutPostRedisplay();}
             break;
         case 'T':
@@ -286,7 +289,7 @@ void keyboard(unsigned char key, int x, int y)
         glutPostRedisplay();}
         break;
         case 'Q':
-        if(elbowx < 0){
+        if(elbowx < 90){
         elbowx = elbowx + 5;
         elbowx2 = elbowx2 + 5;
         glutPostRedisplay();}
