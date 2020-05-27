@@ -2,6 +2,8 @@
 #include "imageloader.h"
 #include "robot.cpp"
 #include <iostream> 
+#include "glm.h"
+
 
 int moving, startx, starty;
 int windowWidth = 1024;
@@ -128,6 +130,24 @@ void floorTexture()
    glPopMatrix();
    //
 }
+
+GLMmodel* pmodel;
+
+
+void drawmodel1( char* name)
+{
+	
+	pmodel = glmReadOBJ(name);
+
+	if (!pmodel) exit(0);
+	glmUnitize(pmodel);
+	glmFacetNormals(pmodel);
+	glmVertexNormals(pmodel, 90.0);
+	glmScale(pmodel, .15);
+
+	glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
+}
+
 void display(void)
 {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -142,8 +162,40 @@ void display(void)
    // legx =-15, legx2 = -15, knee = 15, knee2 = 15;
    body = 50;
    glutPostRedisplay();
+
+   
+	glPushMatrix();
+   glTranslatef(-8, -3, -8);
+   glRotatef(45,0,1,0);
+   glScalef(20,20,20);
+   drawmodel1("objects/Bench_HighRes.obj");
+	glPopMatrix();
+
+   glPushMatrix();
+   glTranslatef(5, -0.1, 2);
+   glRotatef(-90,1,0,0); 
+   glRotatef(-90,0,0,1); 
+   glScalef(20,20,20);
+   drawmodel1("objects/10488_basketball_goal_L3.obj");	
+	glPopMatrix();
+	
+   glPushMatrix();
+   glTranslatef(2, -2, 5);	
+	glScalef(2,2,2);	
+   drawmodel1("objects/soccerball.obj");		
+	glPopMatrix();
+
+   glPushMatrix();
+   glTranslatef(10, -2, -10);
+   glRotatef(90,0,1,0);
+   glRotatef(30,1,0,0);
+   glScalef(10,10,10);	
+   drawmodel1("objects/11703_skateboard_v1_L3.obj");
+	glPopMatrix();
+
+
 	glutSwapBuffers();
-}
+}  
 static void mouse(int button, int state, int x, int y)
 {
   if (button == GLUT_LEFT_BUTTON) {
