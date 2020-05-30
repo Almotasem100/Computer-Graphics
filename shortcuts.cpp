@@ -8,6 +8,9 @@ static int shoulderlz = -75, shoulderrz = 75, elbow = 0, fingerBase = 0, fingerU
             finger4Base2, finger4Up2, finger5Base2, finger5Up2,
             body, elbow2, legx, legz, legx2, legz2, knee, knee2, ankle, ankle2, elbowx, elbowx2;
 double elevation;
+double z=-9;
+static int ball;
+static int elbowr,elbowl;
 double eye[] = { 0, 0, 10 };
 double center[] = { 0, 0, 1 };
 double up[] = { 0, 1, 0 };
@@ -161,18 +164,21 @@ void keyboard2(unsigned char key, int x, int y)
         if(shoulderlx < 160){
         shoulderlx = (shoulderlx + 5);
         shoulderrx = (shoulderrx - 5);
+        std::cout<<shoulderlx<<std::endl;
         glutPostRedisplay();}
         break;
         case 's':
-        if(shoulderlz > -75){
+        if(shoulderlz > -175){
         shoulderlz = (shoulderlz - 5);
         shoulderrz = (shoulderrz + 5);
+        std::cout<<shoulderlz<<std::endl;
         glutPostRedisplay();}
         break;
         case 'S':
         if(shoulderlz < 30){
         shoulderlz = (shoulderlz + 5);
         shoulderrz = (shoulderrz - 5);
+        std::cout<<shoulderlz<<std::endl;
         glutPostRedisplay();}
         break;
         case 'e':
@@ -292,6 +298,7 @@ void keyboard2(unsigned char key, int x, int y)
         if(elbowx < 90){
         elbowx = elbowx + 5;
         elbowx2 = elbowx2 + 5;
+        std::cout<<elbowx<<std::endl;
         glutPostRedisplay();}
         break;
         case 'f':

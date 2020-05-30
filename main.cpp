@@ -2,10 +2,15 @@
 #include "imageloader.h"
 #include "robot.cpp"
 #include <iostream> 
-#include "glm.h"
+
 #include <math.h>
 
+
 int moving, startx, starty;
+int flage=0;
+int flage2=0;
+int s2=2;
+
 int windowWidth = 1024;
 int windowHeight = 768;
 float aspect = float(windowWidth) / float(windowHeight);
@@ -16,7 +21,7 @@ GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 0.0 };
 GLfloat light_diffuse[] = { 0.5, 0.5, 0.5,1.0 };
 GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0 };
 // x , y, z, w
-GLfloat light_position[] = {0.5,5.0, 2.0, 1.0 };
+GLfloat light_position[] = {5.5,5.0, 2.0, 1.0 };
 GLfloat lightPos1[] = {-0.5,-5.0,-2.0, 1.0 };
 // Material Properties
 GLfloat mat_amb_diff[] = {0.643, 0.753, 0.934, 1.0 };
@@ -193,19 +198,7 @@ void floorTexture()
 
 }
 
-GLMmodel* pmodel;
-void drawmodel1( char* name)
-{
-	
-	pmodel = glmReadOBJ(name);
-	if (!pmodel) exit(0);
-	glmUnitize(pmodel);
-	glmFacetNormals(pmodel);
-	glmVertexNormals(pmodel, 90.0);
-	glmScale(pmodel, .15);
 
-	glmDraw(pmodel, GLM_SMOOTH | GLM_MATERIAL);
-}
 
 void display(void)
 {
@@ -239,18 +232,14 @@ void display(void)
 	// glPopMatrix();
 
    glPushMatrix();
-   glTranslatef(5, -0.1, 2);
+   glTranslatef(3.1, -0.1, 4.2);
    glRotatef(-90,1,0,0); 
    glRotatef(-90,0,0,1); 
    glScalef(20,20,20);
    drawmodel1("objects/10488_basketball_goal_L3.obj");	
 	glPopMatrix();
 	
-   glPushMatrix();
-   glTranslatef(2, -2, 5);	
-	glScalef(2,2,2);	
-   drawmodel1("objects/soccerball.obj");		
-	glPopMatrix();
+   
 
    glPushMatrix();
    glTranslatef(-12, -2, -15);	
@@ -266,10 +255,35 @@ void display(void)
    // drawmodel1("objects/11703_skateboard_v1_L3.obj");
 	// glPopMatrix();
    glPopMatrix();
-   body = 50;
+   
   
    robot();
    glPopMatrix();
+   if (flage)
+   {s=0;
+   glPushMatrix();
+            glRotatef((GLfloat) ball, 1.0, 0.0, -1.0);
+            glTranslatef(XX, YY, ZZ);	
+            
+            glScalef(s2,s2,s2);	
+            drawmodel1("objects/soccerball.obj");		
+            glPopMatrix();
+             
+            
+   }
+
+   if (flage2)
+   {s=0;
+   glPushMatrix();
+            
+            glTranslatef(2, -2, 3);	
+            
+            glScalef(2,2,2);	
+            drawmodel1("objects/soccerball.obj");		
+            glPopMatrix();
+            
+            
+   }
 	glutSwapBuffers();
 }  
 static void mouse(int button, int state, int x, int y)
@@ -343,11 +357,14 @@ void screen_menu(int value)
 }
 int state = 0;
 int step_j = 1;
-void timerica(int)
-{
+int statez = 1;
+int state3=0;
 
+void timerica(int)
+{  
+   body = 45;
    switch (state)
-   {
+   {  
       case 0:
       {
          if(legx > -60)
@@ -396,17 +413,27 @@ void timerica(int)
             elevation += 0.03;
          }
          else
+          {
             state = 3;
+          }
       }break;
       case 3:
       {
          if(elevation > 0.025)
          {
             elevation -= 0.025;
+            if(ball < 44)
+            ball+=4;
+            else if(YY>0){
+               YY -= 0.7;
+               XX += 0.3;
+               ZZ += 0.3;}
+            flage=1;
             if(elbow > 0)
             {
                elbow -= step_j;
                elbow2 += step_j;
+               
             }
             if(shoulderlx > 0)
             {
@@ -423,6 +450,7 @@ void timerica(int)
          {
             elbow -= step_j;
             elbow2 += step_j;
+            
          }
          if(shoulderlx > 0)
          {
@@ -444,6 +472,116 @@ void timerica(int)
       glutTimerFunc(5, timerica, 0);
    
 }
+
+void timer(int)
+{
+    
+    
+    if (z <0)
+       { z+=0.1;
+         
+         
+         
+         
+       
+        switch(statez)
+        {
+        case 1:
+               
+               legx+=5;
+               legx2-=5;
+               if (legx >45)
+                 statez =-1;
+            
+            break;
+    
+        case -1:
+               
+               legx-=5;
+               legx2+=5;
+               
+               if (legx<-45)
+
+                  statez=1;
+            break;
+    
+        
+         }
+        glutTimerFunc(1000/60, timer ,0);
+        
+       }
+       
+    
+    else
+    {  
+       legx=0;
+       legx2=0;
+       
+       
+       
+    }
+    
+   glutPostRedisplay();
+   
+}
+
+void timer3(int)
+{
+   glutTimerFunc(1000/60, timer3 ,0);
+   glutPostRedisplay();
+   body=0;
+   s=0;
+   s2=0;
+   flage2=1;
+   switch (state3)
+   {
+      case 0:
+         {
+            if(shoulderlx < 155)
+               {shoulderlx = (shoulderlx + 5);
+                shoulderrx = (shoulderrx - 5);
+               }
+            if(elbowx < 85){
+               elbowx = elbowx + 5;
+               elbowx2 = elbowx2 + 5;
+               }
+
+            if(shoulderlz > -90){
+             shoulderlz = (shoulderlz - 5);
+             shoulderrz = (shoulderrz + 5);
+            }
+            if (shoulderlx==155 && elbowx==85 && shoulderlz==-90)
+                state3=1;
+         }
+         break;
+
+      case 1:
+         {  
+            if(shoulderlz < -75){
+             shoulderlz = (shoulderlz + 5);
+             shoulderrz = (shoulderrz - 5);
+            }
+            else
+               state3=2;
+         }
+         break;
+      case 2:
+         {
+            if(shoulderlz > -140){
+             shoulderlz = (shoulderlz - 5);
+             shoulderrz = (shoulderrz + 5);
+            }
+            else
+              state3=1;
+         }
+         break;
+      default:
+         break;
+   }
+       
+       
+    
+}
 void keyboard(unsigned char key, int x, int y)
 {
    keyboard2(key, x, y);
@@ -453,10 +591,31 @@ void keyboard(unsigned char key, int x, int y)
       state = 0;
       glutTimerFunc(5, timerica, 0);
       break;
-   // case 'Z':
-   //    elevation -= 0.5;
-   //    glutPostRedisplay();
-   default:
+   case 'Z':
+      
+      //glutTimerFunc(1000/60, timer ,0);
+    //  elevation -= 0.5;
+   //   glutPostRedisplay();
+      break;
+   
+
+   case 'v':
+      //XX+=0.1;
+      glutTimerFunc(1000/60, timer3 ,0);
+      glutPostRedisplay();
+      break;
+   case 'V':
+      YY+=0.1;
+      glutPostRedisplay();
+      break;
+   case 'm':
+      ZZ+=0.1;
+      glutPostRedisplay();
+      break;
+   case 'M':
+      std::cout<<XX<<std::endl;
+      std::cout<<YY<<std::endl;
+      std::cout<<ZZ<<std::endl;
       break;
    }
 }
@@ -487,6 +646,7 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyboard);
    glutMouseFunc(mouse);
    glutMotionFunc(motion);
+   glutTimerFunc(1000/60, timer ,0);
    // glutTimerFunc(1000/60, timerica, 0);
 	glutMainLoop();
 	return 0;
