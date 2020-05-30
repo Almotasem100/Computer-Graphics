@@ -84,7 +84,7 @@ g++ -o SBE306B_Spring20_Project_Group_09 SBE306B_Spring20_Project_Group_09.cpp i
 * 'f'/'b' keybuttons: to move the camera forward and backwards
 ## List of commands to control the animations
 * 'z': to command the robot to make a 3 point basketball shot
-* 'Z': to command the robot to wave to the public while dispalying an advice to the them
+* 'v': to command the robot to wave to the public while dispalying an advice to the them
 
 # Functions Implemnted that satisfy the requirements
 ## initRendering() Function:
