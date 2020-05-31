@@ -1,7 +1,6 @@
 #include <GL/glut.h>
 #include "imageloader.h"
 #include "glm.h"
-#include "robot.cpp"
 #include <iostream> 
 #include <math.h>
 static int shoulderlz = -75, shoulderrz = 75, elbow = 0, fingerBase = 0, fingerUp = 0,
@@ -229,8 +228,6 @@ void keyboard2(unsigned char key, int x, int y)
         case 't':
         if(legx < 50){
             legx = (legx + 5);
-            // std::cout<<legx<<legx2<<std::endl;
-            // std::cout<<knee<<knee2<<std::endl;
             glutPostRedisplay();}
             break;
         case 'T':
@@ -816,18 +813,6 @@ void floorTexture()
    glVertex3f(-10,10,-10);
    glEnd();
 
-// glBegin(GL_QUADS);      
-// 	glNormal3f(0.0,0.0,-1.0);
-// 	glTexCoord2f(0.0f, 0.0f);
-//    glVertex3f(10,10,10);
-//    glTexCoord2f(5.0f,  0.0f);
-//    glVertex3f(10,-3.35,10);
-//    glTexCoord2f(5.0f,  20.0f);
-//    glVertex3f(-10,-3.35,10);
-//    glTexCoord2f(0.0f, 20.0f);
-//    glVertex3f(-10,10,10);
-//    glEnd();
-
    glBegin(GL_QUADS);       
 	glNormal3f(-1.0,0.0,0.0);
 	glTexCoord2f(0.0f, 0.0f);
@@ -896,16 +881,7 @@ void display(void)
 	glTranslatef(0, 0, -1);
    floorTexture();
 
-   // legx =-15, legx2 = -15, knee = 15, knee2 = 15;
-   
-   // glutPostRedisplay();
    glPushMatrix();
-	// glPushMatrix();
-   // glTranslatef(-8, -3, -8);
-   // glRotatef(45,0,1,0);
-   // glScalef(20,20,20);
-   // drawmodel1("objects/Bench_HighRes.obj");
-	// glPopMatrix();
 
    glPushMatrix();
    glTranslatef(3.1, -0.1, 4.2);
@@ -923,13 +899,6 @@ void display(void)
    drawmodel1("objects/flowers.obj");		
 	glPopMatrix();
 
-   // glPushMatrix();
-   // glTranslatef(10, -2, -10);
-   // glRotatef(90,0,1,0);
-   // glRotatef(30,1,0,0);
-   // glScalef(10,10,10);	
-   // drawmodel1("objects/11703_skateboard_v1_L3.obj");
-	// glPopMatrix();
    glPopMatrix();
    
   
@@ -1011,9 +980,6 @@ void screen_menu(int value)
 	case 2:
 		image = loadBMP("data/floor2.bmp");
 		break;
-   // case 3:
-	// 	image = loadBMP("data/floor3.bmp");
-	// 	break;
 	case 4:
 		image = loadBMP("data/floor4.bmp");
 		break;
@@ -1268,15 +1234,8 @@ void keyboard(unsigned char key, int x, int y)
       glutTimerFunc(5, timerica, 0);
       break;
    case 'Z':
-      
-      //glutTimerFunc(1000/60, timer ,0);
-    //  elevation -= 0.5;
-   //   glutPostRedisplay();
       break;
-   
-
    case 'v':
-      //XX+=0.1;
       glutTimerFunc(1000/60, timer3 ,0);
       glutPostRedisplay();
       break;
@@ -1308,9 +1267,6 @@ int main(int argc, char **argv)
 	init();
 	glutDisplayFunc(display);
    glutCreateMenu(screen_menu);
-	// glutAddMenuEntry("Floors:", 0);
-	// glutAddMenuEntry("", 0);
-   // glutAddMenuEntry("floor3", 3);
 	glutAddMenuEntry("         Floor1         ", 1);
 	glutAddMenuEntry("         Floor2", 2);
 	glutAddMenuEntry("         Floor3", 4);
@@ -1323,7 +1279,6 @@ int main(int argc, char **argv)
    glutMouseFunc(mouse);
    glutMotionFunc(motion);
    glutTimerFunc(1000/60, timer ,0);
-   // glutTimerFunc(1000/60, timerica, 0);
 	glutMainLoop();
 	return 0;
 }
