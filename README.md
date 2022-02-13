@@ -1,21 +1,13 @@
-# **Graphics-final-project**
+# **Computer Graphics Project**
 
-# **Group ID: 9**
-
-
-
-      Name                   SEC    BN    MAIL  
+      Name                       MAIL  
       
-      Mariam Ahmed            2     29    mariem.ahmed.1608@gmail.com  
-      Esraa Sayed             1     12    sayedesraa645@gmail.com  
-      Al-Zahraa Eid           1     16    alzahraaeid62@gmail.com  
-      Mohamed Almotasem       2     18    mohammed.almotasem55@googlemail.com  
-      Galal Hossam El-Dein    1     26    galalhossam555@gmail.com
+      Mariam Ahmed               mariem.ahmed.1608@gmail.com  
+      Esraa Sayed                sayedesraa645@gmail.com  
+      Al-Zahraa Eid              alzahraaeid62@gmail.com  
+      Mohamed Almotasem          mohammed.almotasem55@googlemail.com  
+      Galal Hossam El-Dein       galalhossam555@gmail.com
 
-### *Repository Link:*
-```
-https://github.com/Almotasem100/Graphics-final-
-```
 <!-- MarkdownTOC -->
   - [Robot with Animation Graphics:](#Robot-with-Animation-Graphics:)
     - [Files written](#Files-written)
@@ -38,6 +30,9 @@ https://github.com/Almotasem100/Graphics-final-
 
 # Robot with Animation Graphics
 the aim of the task is to implement the full body of a robot, add the control and limitations to its movements, control the camera and the view prospective using the arrows and the mouse, get more familiar with the concepts of textures-lightening-and shading, add a drop menu to interact with these texture, import certain objects and implement animations to the robot where one of those animations is to be where the robot interacts with one of the objects.
+
+![Alt Text](Results/gifFinal.gif)
+
 ## Files written:
 
 * ReadMe.md: the markdown file contain the description of the task
@@ -332,7 +327,7 @@ void timer(int)
   glutPostRedisplay();   
 }
 ```
-![Alt Text](gif2.gif)
+![Alt Text](Results/gif2.gif)
 
 ##  timerica() Function:
 
@@ -448,7 +443,7 @@ void timerica(int)
     glutTimerFunc(5, timerica, 0);   
 }
 ```
-![Alt Text](gif1.gif)
+![Alt Text](Results/gif1.gif)
 
 ## timer3() Function:
 
@@ -512,4 +507,4 @@ void timer3(int)
        break;
    }
 ```
-![Alt Text](gif4.gif)
+![Alt Text](Results/gif4.gif)
